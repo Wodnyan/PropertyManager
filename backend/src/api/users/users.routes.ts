@@ -103,6 +103,8 @@ router.post("/login", async (req, res, next) => {
       },
     });
   } catch (error) {
+    const errors = error.details?.map((error: any) => error.message);
+    error.errors = errors;
     next(error);
   }
 });

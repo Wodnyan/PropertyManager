@@ -15,6 +15,10 @@ CREATE TABLE "User" (
 CREATE TABLE "Property" (
 "id" SERIAL,
     "ownerId" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
+    "latitude" DECIMAL(65,30) NOT NULL,
+    "longitude" DECIMAL(65,30) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
