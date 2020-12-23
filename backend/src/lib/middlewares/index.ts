@@ -18,5 +18,6 @@ export const defaultErrorHandler = (
     message: error.message,
     code: statusCode,
     stack: process.env.NODE_ENV === "production" ? undefined : error.stack,
+    errors: error.errors,
   });
 };
