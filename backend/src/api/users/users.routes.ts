@@ -1,9 +1,9 @@
 import { Router } from "express";
 import prisma from "../../db";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import Joi from "joi";
+import { createAccessToken, createRefreshToken } from "../../lib/jwt";
 
 dotenv.config();
 
@@ -15,30 +15,6 @@ const registerSchema = Joi.object({
 });
 
 const router = Router();
-
-const createAccessToken = (id: number) => {
-  return jwt.sign(
-    {
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-      data: {
-        id,
-      },
-    },
-    process.env.JWT_SECRET!
-  );
-};
-
-const createRefreshToken = (id: number) => {
-  return jwt.sign(
-    {
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-      data: {
-        id,
-      },
-    },
-    process.env.JWT_SECRET!
-  );
-};
 
 router.post("/register", async (req, res, next) => {
   try {
