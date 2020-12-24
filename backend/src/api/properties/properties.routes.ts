@@ -7,14 +7,20 @@ const schema = Joi.object({
   ownerId: Joi.number().required(),
   name: Joi.string().required(),
   address: Joi.string(),
-  long: Joi.number(),
-  lat: Joi.number(),
-}).and("long", "lat");
+  longitude: Joi.number(),
+  latitude: Joi.number(),
+}).and("longitude", "latitude");
+
+const patchSchema = Joi.object({
+  name: Joi.string(),
+  address: Joi.string(),
+  longitude: Joi.number(),
+  latitude: Joi.number(),
+}).and("longitude", "latitude");
 
 const router = Router();
 
 router.get("/", async (req, res, next) => {
-  const { tenant } = req.query;
   try {
     const properties = await prisma.property.findMany();
     res.json({
@@ -54,7 +60,28 @@ router.delete("/:id", async (req, res, next) => {
     next(error);
   }
 });
-router.patch("/:id", (req, res, next) => {});
+
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const validated = await patchSchema.validateAsync(req.body, {
+      abortEarly: false,
+    });
+    const updated = await prisma.property.update({
+      where: {
+        id: parseInt(req.params.id),
+      },
+      data: validated,
+    });
+    res.json({
+      updated,
+    });
+  } catch (error) {
+    const errors = error.details?.map((error: any) => error.message);
+    error.errors = errors;
+    next(error);
+  }
+});
+
 router.post("/", async (req, res, next) => {
   try {
     const validated = await schema.validateAsync(req.body, {
@@ -64,8 +91,8 @@ router.post("/", async (req, res, next) => {
       data: {
         name: validated.name,
         address: validated.address,
-        latitude: validated.lat,
-        longitude: validated.long,
+        latitude: validated.latitude,
+        longitude: validated.longitude,
         createdAt: new Date(),
         owner: {
           connect: {
