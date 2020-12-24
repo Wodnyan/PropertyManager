@@ -13,7 +13,7 @@ const schema = Joi.object({
 
 const router = Router();
 
-router.get("/", checkToken, async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   const { tenant } = req.query;
   try {
     const properties = await prisma.property.findMany();
