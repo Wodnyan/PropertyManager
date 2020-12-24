@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../../db";
 import Joi from "joi";
+import { checkToken } from "../../lib/middlewares/";
 
 const schema = Joi.object({
   ownerId: Joi.number().required(),
@@ -12,8 +13,9 @@ const schema = Joi.object({
 
 const router = Router();
 
-router.get("/", async (req, res, next) => {
+router.get("/", checkToken, async (req, res, next) => {
   const { tenant } = req.query;
+  console.log(req.refreshToken);
   try {
     const properties = await prisma.property.findMany();
     res.json({
