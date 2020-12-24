@@ -15,7 +15,6 @@ const router = Router();
 
 router.get("/", checkToken, async (req, res, next) => {
   const { tenant } = req.query;
-  console.log(req.refreshToken);
   try {
     const properties = await prisma.property.findMany();
     res.json({
