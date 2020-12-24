@@ -3,23 +3,28 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 dotenv.config();
 
-export const checkToken = (req: Request, _: Response, next: NextFunction) => {
+export const checkToken = (req: Request, res: Response, next: NextFunction) => {
   let token = req.headers.authorization;
   try {
     if (token) {
       // Bearer <token>
       token = token.split(" ")[1];
       const verified = jwt.verify(token, process.env.JWT_SECRET!);
-      console.log(verified);
       next();
     }
   } catch (error) {
     if (error.message === "jwt expired") {
-      // Check refresh token.
       const refreshToken = req.cookies.refresh_token;
-      const verified = jwt.verify(refreshToken, process.env.JWT_SECRET!);
-      req.refreshToken = refreshToken;
-      return next();
+      try {
+        const verified = jwt.verify(refreshToken, process.env.JWT_SECRET!);
+        res.cookie("refresh_token", refreshToken, { httpOnly: true });
+        return next();
+      } catch (error) {
+        res.status(401);
+        return res.json({
+          message: "You aren't authorized to view this content",
+        });
+      }
     }
     next(error);
   }
