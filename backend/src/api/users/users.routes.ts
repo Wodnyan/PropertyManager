@@ -18,14 +18,24 @@ const router = Router();
 
 router.post("/register", async (req, res, next) => {
   try {
+    const {
+      email,
+      password,
+      firstName: first_name,
+      lastName: last_name,
+    } = req.body;
     const validated = await registerSchema.validateAsync(req.body, {
       abortEarly: false,
     });
-    console.log(validated);
-    req.body.createdAt = new Date();
-    req.body.password = await bcrypt.hash(req.body.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: req.body,
+      data: {
+        created_at: new Date(),
+        password: hashedPassword,
+        email,
+        first_name,
+        last_name,
+      },
     });
     const refreshToken = createRefreshToken(user.id);
     const accessToken = createAccessToken(user.id);
@@ -74,8 +84,8 @@ router.post("/login", async (req, res, next) => {
       user: {
         id: user.id,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: user.last_name,
+        lastName: user.first_name,
       },
     });
   } catch (error) {
