@@ -84,16 +84,19 @@ router.patch("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const validated = await schema.validateAsync(req.body, {
-      abortEarly: false,
-    });
+    const validated = await schema.validateAsync(
+      req.body,
+      {
+        abortEarly: false,
+      }
+    );
     const property = await prisma.property.create({
       data: {
         name: validated.name,
         address: validated.address,
         latitude: validated.latitude,
         longitude: validated.longitude,
-        createdAt: new Date(),
+        created_at: new Date(),
         owner: {
           connect: {
             id: validated.ownerId,
