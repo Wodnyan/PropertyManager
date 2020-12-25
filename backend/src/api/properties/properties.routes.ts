@@ -33,13 +33,44 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const properties = await prisma.property.findFirst({
+    const property = await prisma.property.findFirst({
       where: {
         id: parseInt(req.params.id),
       },
+      include: {
+        owner: {
+          include: {
+            user: {
+              select: {
+                email: true,
+                first_name: true,
+                last_name: true,
+              },
+            },
+          },
+        },
+      },
     });
     res.json({
-      properties,
+      property,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id/tenants", async (req, res, next) => {
+  try {
+    const property = await prisma.property.findFirst({
+      where: {
+        id: parseInt(req.params.id),
+      },
+      select: {
+        Tenant: true,
+      },
+    });
+    res.json({
+      property,
     });
   } catch (error) {
     next(error);
@@ -84,12 +115,9 @@ router.patch("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const validated = await schema.validateAsync(
-      req.body,
-      {
-        abortEarly: false,
-      }
-    );
+    const validated = await schema.validateAsync(req.body, {
+      abortEarly: false,
+    });
     const property = await prisma.property.create({
       data: {
         name: validated.name,
