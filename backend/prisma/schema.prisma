@@ -41,6 +41,7 @@ model Property {
   created_at DateTime
   updated_at DateTime @updatedAt
   Tenant     Tenant[]
+  Invite     Invite[]
 }
 
 model Tenant {
@@ -49,6 +50,15 @@ model Tenant {
   user_id     Int
   landlord    Owner    @relation(fields: [landlord_id], references: [id])
   landlord_id Int
+  property    Property @relation(fields: [property_id], references: [id])
+  property_id Int
+  created_at  DateTime
+  updated_at  DateTime @updatedAt
+}
+
+model Invite {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
   property    Property @relation(fields: [property_id], references: [id])
   property_id Int
   created_at  DateTime
