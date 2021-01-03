@@ -18,6 +18,11 @@ const patchSchema = Joi.object({
   latitude: Joi.number(),
 }).and("longitude", "latitude");
 
+const joinSchema = Joi.object({
+  propertyId: Joi.number().required(),
+  code: Joi.string().required(),
+});
+
 const router = Router();
 
 router.get("/", async (req, res, next) => {
@@ -109,6 +114,66 @@ router.patch("/:id", async (req, res, next) => {
   } catch (error) {
     const errors = error.details?.map((error: any) => error.message);
     error.errors = errors;
+    next(error);
+  }
+});
+
+router.post("/:propertyId/join", async (req, res, next) => {
+  try {
+    const { propertyId } = req.params;
+    const { code, userId } = req.body;
+    const validate = await joinSchema.validateAsync(
+      { code, propertyId },
+      {
+        abortEarly: false,
+      }
+    );
+    const [invite] = await prisma.invite.findMany({
+      where: {
+        property: {
+          id: validate.propertyId,
+        },
+        code: validate.code,
+      },
+      include: {
+        property: true,
+      },
+    });
+    if (!Boolean(invite)) {
+      const error = new Error("Bad Request");
+      res.status(400);
+      return next(error);
+    }
+    const tenant = await prisma.tenant.create({
+      data: {
+        created_at: new Date(),
+        landlord: {
+          connect: {
+            id: invite.property.owner_id,
+          },
+        },
+        property: {
+          connect: {
+            id: invite.property.id,
+          },
+        },
+        user: {
+          connect: {
+            id: Number(userId),
+          },
+        },
+      },
+    });
+    res.status(201).json({
+      tenant,
+    });
+    res.json({
+      invite,
+    });
+  } catch (error) {
+    const errors = error.details?.map((error: any) => error.message);
+    error.errors = errors;
+    if (error.errors) res.status(400);
     next(error);
   }
 });
