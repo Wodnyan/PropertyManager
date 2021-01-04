@@ -13,9 +13,46 @@ export const CreateNewProperty = () => {
     longitude: null,
   });
 
+  const handlePress = () => {
+    console.log(propertyInfo);
+  };
+
+  const handleTextChange = (text: string, name: string) => {
+    setPropertyInfo((prev) => ({
+      ...prev,
+      [name]: text,
+    }));
+  };
+
   return (
     <View>
-      <Text h1>New Property</Text>
+      <Input
+        onChangeText={(text) => handleTextChange(text, "name")}
+        value={propertyInfo.name}
+        label="Property Name"
+        placeholder="Property Name"
+      />
+      <Input
+        onChangeText={(text) => handleTextChange(text, "address")}
+        value={propertyInfo.address || ""}
+        label="Address"
+        placeholder="Adress"
+      />
+      <Input
+        onChangeText={(text) => handleTextChange(text, "latitude")}
+        value={propertyInfo.latitude?.toString() || ""}
+        keyboardType="numeric"
+        label="Latitude"
+        placeholder="Latitude"
+      />
+      <Input
+        onChangeText={(text) => handleTextChange(text, "longitude")}
+        value={propertyInfo.longitude?.toString() || ""}
+        keyboardType="numeric"
+        label="Longitude"
+        placeholder="Longitude"
+      />
+      <Button onPress={handlePress} title="Create" />
     </View>
   );
 };
