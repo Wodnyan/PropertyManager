@@ -1,4 +1,5 @@
-export const API_ENDPOINT = `http://${process.env.LOCAL_IP_ADDRESS}:5050/api/v1`;
+export const API_ENDPOINT = `http://192.168.0.158:5050/api/v1`;
+console.log(API_ENDPOINT);
 export enum Screens {
   Home = "HOME",
   Login = "LOGIN",

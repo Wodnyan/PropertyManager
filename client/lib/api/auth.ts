@@ -28,6 +28,7 @@ export const login = async (userInfo: LoginParams) => {
 };
 
 export const signUp = async (userInfo: SignUpParams) => {
+  console.log("Here")
   const res = await fetch(`${USERS_ENDPOINT}/register`, {
     method: "POST",
     headers: {

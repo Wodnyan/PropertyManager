@@ -33,13 +33,14 @@ export const SignUpForm: React.FC<any> = () => {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
   const handleSignUp = async () => {
     try {
-      navigation.navigate(Screens.Choose);
-      //const user = await signUp(userInfo);
-      //console.log("User: ", user);
+      const user = await signUp(userInfo);
+      console.log("User: ", user);
+      //navigation.navigate(Screens.Choose);
     } catch (error) {
       console.error(error);
     }
@@ -76,7 +77,11 @@ export const SignUpForm: React.FC<any> = () => {
         }
         value={userInfo.password}
       />
-      <Button title="Sign up" onPress={handleSignUp} />
+      {isLoading ? (
+        <Button loading />
+      ) : (
+        <Button title="Sign up" onPress={handleSignUp} />
+      )}
     </View>
   );
 };
