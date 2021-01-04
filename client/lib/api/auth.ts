@@ -23,7 +23,7 @@ export const login = async (userInfo: LoginParams) => {
     credentials: "include",
     body: JSON.stringify(userInfo),
   });
-  const credentials = res.json();
+  const credentials = await res.json();
   return credentials;
 };
 
@@ -36,6 +36,6 @@ export const signUp = async (userInfo: SignUpParams) => {
     credentials: "include",
     body: JSON.stringify(userInfo),
   });
-  const credentials = res.json();
+  const credentials = await res.json();
   return credentials;
 };
