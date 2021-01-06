@@ -36,6 +36,12 @@ export const signUp = async (userInfo: SignUpParams) => {
     credentials: "include",
     body: JSON.stringify(userInfo),
   });
-  const credentials = await res.json();
-  return credentials;
+  if (res.status === 201) {
+    const credentials = await res.json();
+    return credentials;
+  } else {
+    const error = await res.json();
+    console.log(error);
+    throw error;
+  }
 };

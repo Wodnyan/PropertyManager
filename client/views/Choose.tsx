@@ -1,10 +1,10 @@
-import React from "react";
-import Icon from "react-native-vector-icons/FontAwesome";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { Screens } from "../constants";
 import { JoinProperty, CreateNewProperty } from "../components/PropertyForms";
+import { FontAwesome as Icon } from "@expo/vector-icons";
 
 const styles = StyleSheet.create({
   card: {

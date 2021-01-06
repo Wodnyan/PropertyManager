@@ -24,7 +24,7 @@ export const joinProperty = async (
 };
 
 export const createProperty = async (propertyInfo: any) => {
-  const res = await fetch(`${PROPERTY_ENDPOINT}/login`, {
+  const res = await fetch(`${PROPERTY_ENDPOINT}/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

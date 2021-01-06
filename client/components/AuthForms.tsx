@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
 import { Text, Input, Button } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { signUp } from "../lib/api/auth";
+import { AsyncStorage } from "react-native";
 import { Screens } from "../constants";
+import { FontAwesome } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { ADD_USER } from "../redux/actions/user";
 
 interface InputProps {
   value: string;
@@ -33,15 +36,34 @@ export const SignUpForm: React.FC<any> = () => {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleSignUp = async () => {
     try {
-      navigation.navigate(Screens.Choose);
-      //const user = await signUp(userInfo);
-      //console.log("User: ", user);
+      setIsLoading(true);
+      const user = await signUp(userInfo);
+      await AsyncStorage.setItem("access_token", user.accessToken);
+      dispatch(
+        ADD_USER({
+          id: user.user.id,
+          firstName: user.user.first_name,
+          lastName: user.user.last_name,
+          email: user.user.email,
+        })
+      );
+      setTimeout(() => {
+        setIsLoading(false);
+        navigation.navigate(Screens.Choose);
+      }, 1000);
     } catch (error) {
-      console.error(error);
+      setIsLoading(false);
+      if (error.errors?.length > 0) {
+        console.error(error.errors);
+      } else {
+        console.log(error.message);
+      }
     }
   };
 
@@ -50,7 +72,7 @@ export const SignUpForm: React.FC<any> = () => {
       <Text h1>Sign Up Page</Text>
       <Input
         placeholder="First Name"
-        leftIcon={<Icon name="user" size={24} color="black" />}
+        leftIcon={<FontAwesome name="user" size={24} color="black" />}
         onChangeText={(text) =>
           setUserInfo((prev) => ({ ...prev, firstName: text }))
         }
@@ -58,7 +80,7 @@ export const SignUpForm: React.FC<any> = () => {
       />
       <Input
         placeholder="Last Name"
-        leftIcon={<Icon name="user" size={24} color="black" />}
+        leftIcon={<FontAwesome name="user" size={24} color="black" />}
         onChangeText={(text) =>
           setUserInfo((prev) => ({ ...prev, lastName: text }))
         }
@@ -76,7 +98,11 @@ export const SignUpForm: React.FC<any> = () => {
         }
         value={userInfo.password}
       />
-      <Button title="Sign up" onPress={handleSignUp} />
+      {isLoading ? (
+        <Button loading />
+      ) : (
+        <Button title="Sign up" onPress={handleSignUp} />
+      )}
     </View>
   );
 };
@@ -87,7 +113,7 @@ const EmailInput: React.FC<InputProps> = ({ onChangeText, value }) => {
       placeholder="Email"
       onChangeText={onChangeText}
       value={value}
-      leftIcon={<Icon name="envelope" size={24} color="black" />}
+      leftIcon={<FontAwesome name="envelope" size={24} color="black" />}
     />
   );
 };
@@ -99,11 +125,11 @@ const PasswordInput: React.FC<InputProps> = ({ onChangeText, value }) => {
     <Input
       placeholder="Password"
       secureTextEntry={!showPassword}
-      leftIcon={<Icon name="lock" size={24} color="black" />}
+      leftIcon={<FontAwesome name="lock" size={24} color="black" />}
       onChangeText={onChangeText}
       value={value}
       rightIcon={
-        <Icon
+        <FontAwesome
           name={showPassword ? "eye-slash" : "eye"}
           onPress={() => setShowPassword((prev) => !prev)}
           size={24}

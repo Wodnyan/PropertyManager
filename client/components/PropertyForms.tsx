@@ -1,20 +1,27 @@
-import React, { useState } from "react";
-import { View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, AsyncStorage } from "react-native";
 import { Text, Button, Input } from "react-native-elements";
 import { joinProperty, createProperty } from "../lib/api/properties";
 import { Property } from "../types";
+import { useSelector, shallowEqual } from "react-redux";
 
 export const CreateNewProperty = () => {
+  const user = useSelector((state: any) => state.user, shallowEqual);
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
   const [propertyInfo, setPropertyInfo] = useState<Property>({
     name: "",
-    ownerId: null,
-    address: null,
-    latitude: null,
-    longitude: null,
+    ownerId: user?.id,
+    address: undefined,
+    latitude: undefined,
+    longitude: undefined,
   });
 
-  const handlePress = () => {
-    console.log(propertyInfo);
+  const handlePress = async () => {
+    const token = await AsyncStorage.getItem("access_token");
+    const property = await createProperty(propertyInfo);
+    console.log(property);
   };
 
   const handleTextChange = (text: string, name: string) => {
