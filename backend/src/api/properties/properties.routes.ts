@@ -64,7 +64,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.get("/:id/tenants", async (req, res, next) => {
+router.get("/:id/tenants", checkToken, async (req, res, next) => {
   try {
     const property = await prisma.property.findFirst({
       where: {
@@ -82,7 +82,7 @@ router.get("/:id/tenants", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", checkToken, async (req, res, next) => {
   try {
     const properties = await prisma.property.delete({
       where: {
@@ -97,7 +97,7 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-router.patch("/:id", async (req, res, next) => {
+router.patch("/:id", checkToken, async (req, res, next) => {
   try {
     const validated = await patchSchema.validateAsync(req.body, {
       abortEarly: false,
@@ -118,7 +118,7 @@ router.patch("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/:propertyId/join", async (req, res, next) => {
+router.post("/:propertyId/join", checkToken, async (req, res, next) => {
   try {
     const { propertyId } = req.params;
     const { code, userId } = req.body;
@@ -178,7 +178,7 @@ router.post("/:propertyId/join", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", checkToken, async (req, res, next) => {
   try {
     const validated = await schema.validateAsync(req.body, {
       abortEarly: false,

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../../db";
 import Joi from "joi";
+import { checkToken } from "../../lib/middlewares";
 
 const router = Router();
 
@@ -10,7 +11,7 @@ const schema = Joi.object({
   userId: Joi.number().required(),
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", checkToken, async (req, res, next) => {
   try {
     const { id } = req.params;
     const tenant = await prisma.tenant.findFirst({
@@ -80,7 +81,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", checkToken, async (req, res, next) => {
   try {
     const validated = await schema.validateAsync(req.body, {
       abortEarly: false,

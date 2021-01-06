@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../../db";
 import Joi from "joi";
+import { checkToken } from "../../lib/middlewares/";
 
 const schema = Joi.object({
   userId: Joi.number().required(),
@@ -8,7 +9,7 @@ const schema = Joi.object({
 
 const router = Router();
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", checkToken, async (req, res, next) => {
   const { id } = req.params;
   try {
     const owner = await prisma.owner.findFirst({
@@ -33,7 +34,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.get("/:id/tenants", async (req, res, next) => {
+router.get("/:id/tenants", checkToken, async (req, res, next) => {
   const { id } = req.params;
   try {
     const owner = await prisma.owner.findFirst({
@@ -52,7 +53,7 @@ router.get("/:id/tenants", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", checkToken, async (req, res, next) => {
   try {
     const { userId } = req.body;
     const validated = await schema.validateAsync(
@@ -74,6 +75,7 @@ router.post("/", async (req, res, next) => {
       owner,
     });
   } catch (error) {
+    console.log(error);
     const errors = error.details?.map((error: any) => error.message);
     error.errors = errors;
     next(error);
