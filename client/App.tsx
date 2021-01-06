@@ -5,8 +5,9 @@ import Home from "./views/Home";
 import { Login, SignUp } from "./views/AuthPages";
 import Choose, { TenantChoice, LandlordChoice } from "./views/Choose";
 import { Screens } from "./constants";
-import { Provider } from "react-redux";
+import { Provider, connect } from "react-redux";
 import store from "./redux/store";
+import { ADD_USER } from "./redux/actions/user";
 
 const Stack = createStackNavigator();
 
@@ -29,4 +30,10 @@ function App() {
     </Provider>
   );
 }
+
+const mapStateToProps = (state: any) => {
+  const { user } = state;
+  return { user };
+};
 export default App;
+//export default connect(mapStateToProps, { ADD_USER })(App);

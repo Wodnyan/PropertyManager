@@ -50,6 +50,8 @@ router.post("/register", async (req, res, next) => {
   } catch (error) {
     const errors = error.details?.map((error: any) => error.message);
     error.errors = errors;
+    error.message =
+      error.code === "P2002" ? "Email is already in use" : error.message;
     next(error);
   }
 });

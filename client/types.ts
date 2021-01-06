@@ -1,7 +1,14 @@
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export interface Property {
   ownerId: number | null;
   name: string;
-  address: string | null;
-  longitude: number | null;
-  latitude: number | null;
+  address: string | undefined;
+  longitude: number | undefined;
+  latitude: number | undefined;
 }
