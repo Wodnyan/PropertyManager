@@ -2,6 +2,7 @@ import { Router } from "express";
 import prisma from "../../db";
 import Joi from "joi";
 import randomCode from "../../lib/randomCode";
+import { checkToken } from "../../lib/middlewares";
 
 const router = Router();
 
@@ -9,7 +10,7 @@ const createSchema = Joi.object({
   propertyId: Joi.number().required(),
 });
 
-router.post("/:propertyId/create", async (req, res, next) => {
+router.post("/:propertyId/create", checkToken, async (req, res, next) => {
   try {
     const { propertyId } = req.params;
     const validate = await createSchema.validateAsync(
@@ -36,12 +37,12 @@ router.post("/:propertyId/create", async (req, res, next) => {
         code,
         property: {
           connect: {
-            id: validate.propertyId
-          }
+            id: validate.propertyId,
+          },
         },
         created_at: new Date(),
-      }
-    })
+      },
+    });
     res.json({
       message: "invites",
       code,

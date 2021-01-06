@@ -8,6 +8,7 @@ import { createAccessToken, createRefreshToken } from "../../lib/jwt";
 dotenv.config();
 
 const registerSchema = Joi.object({
+  // TODO: Make a min and max length for these.
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   email: Joi.string().email().required(),
