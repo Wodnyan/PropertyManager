@@ -4,6 +4,7 @@ import { Text, Button, Input } from "react-native-elements";
 import { joinProperty, createProperty } from "../lib/api/properties";
 import { Property } from "../types";
 import { useSelector, shallowEqual } from "react-redux";
+import { createOwner } from "../lib/api/owners";
 
 export const CreateNewProperty = () => {
   const user = useSelector((state: any) => state.user, shallowEqual);
@@ -12,7 +13,7 @@ export const CreateNewProperty = () => {
   }, [user]);
   const [propertyInfo, setPropertyInfo] = useState<Property>({
     name: "",
-    ownerId: user?.id,
+    ownerId: null,
     address: undefined,
     latitude: undefined,
     longitude: undefined,
@@ -20,7 +21,14 @@ export const CreateNewProperty = () => {
 
   const handlePress = async () => {
     const token = await AsyncStorage.getItem("access_token");
-    const property = await createProperty(propertyInfo);
+    console.log("Property Info: ", propertyInfo);
+    // TODO: Make the user an owner
+    const { owner } = await createOwner(user.id);
+    console.log("Owner: ", owner.id);
+    const property = await createProperty({
+      ...propertyInfo,
+      ownerId: owner.id
+    });
     console.log(property);
   };
 
