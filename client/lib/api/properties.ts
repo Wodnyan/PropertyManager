@@ -23,11 +23,15 @@ export const joinProperty = async (
   return data;
 };
 
-export const createProperty = async (propertyInfo: any) => {
+export const createProperty = async (
+  propertyInfo: any,
+  accessToken: string
+) => {
   const res = await fetch(`${PROPERTY_ENDPOINT}/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     },
     credentials: "include",
     body: JSON.stringify(propertyInfo),
