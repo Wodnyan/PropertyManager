@@ -20,16 +20,18 @@ export const CreateNewProperty = () => {
   });
 
   const handlePress = async () => {
-    const token = await AsyncStorage.getItem("access_token");
-    console.log("Property Info: ", propertyInfo);
-    // TODO: Make the user an owner
-    const { owner } = await createOwner(user.id);
-    console.log("Owner: ", owner.id);
-    const property = await createProperty({
-      ...propertyInfo,
-      ownerId: owner.id
-    });
-    console.log(property);
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+      const { owner } = await createOwner(user.id, token!);
+      console.log("Owner: ", owner.id);
+      const property = await createProperty({
+        ...propertyInfo,
+        ownerId: owner.id,
+      }, token!);
+      console.log(property);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleTextChange = (text: string, name: string) => {
