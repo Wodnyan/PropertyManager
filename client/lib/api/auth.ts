@@ -22,12 +22,11 @@ export const getUserData = async (token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (res.status === 201) {
-    const credentials = await res.json();
-    return credentials;
+  if (res.status === 200) {
+    const user = await res.json();
+    return user;
   } else {
     const error = await res.json();
-    console.log(error);
     throw error;
   }
 };
