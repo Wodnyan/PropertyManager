@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./Home";
@@ -7,10 +7,11 @@ import Choose, { TenantChoice, LandlordChoice } from "./Choose";
 import { Screens } from "../constants";
 import { Provider } from "react-redux";
 import store from "../redux/store";
+import Properties from "./Properties";
 
 const Stack = createStackNavigator();
 
-function App() {
+function Views() {
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -24,10 +25,11 @@ function App() {
             name={Screens.LandlordChoice}
             component={LandlordChoice}
           />
+          <Stack.Screen name={Screens.Properties} component={Properties} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
   );
 }
 
-export default App;
+export default Views;

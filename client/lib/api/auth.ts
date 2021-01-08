@@ -14,6 +14,24 @@ interface LoginParams {
   password: string;
 }
 
+export const getUserData = async (token: string) => {
+  const res = await fetch(`${USERS_ENDPOINT}/user`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (res.status === 201) {
+    const credentials = await res.json();
+    return credentials;
+  } else {
+    const error = await res.json();
+    console.log(error);
+    throw error;
+  }
+};
+
 export const login = async (userInfo: LoginParams) => {
   const res = await fetch(`${USERS_ENDPOINT}/login`, {
     method: "POST",

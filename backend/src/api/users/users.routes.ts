@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import Joi from "joi";
 import { createAccessToken, createRefreshToken } from "../../lib/jwt";
+import { checkToken } from "../../lib/middlewares";
 
 dotenv.config();
 
@@ -16,6 +17,57 @@ const registerSchema = Joi.object({
 });
 
 const router = Router();
+
+router.get("/user", checkToken, async (req, res, next) => {
+  console.log(req.userId);
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: Number(req.userId),
+      },
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        email: true,
+        created_at: true,
+      },
+    });
+    res.json({
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id", checkToken, async (req, res, next) => {
+  const { id } = req.params;
+  if (isNaN(Number(id))) {
+    const error = new Error(`Param ${id} is not a number`);
+    res.status(400);
+    return next(error);
+  }
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        email: true,
+        created_at: true,
+      },
+    });
+    res.json({
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.post("/register", async (req, res, next) => {
   try {
