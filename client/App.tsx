@@ -1,24 +1,14 @@
-import React, { useEffect } from "react";
-import { getUserData } from "./lib/api/auth";
+import React from "react";
 import Views from "./views/";
-import { AsyncStorage } from "react-native";
-import { useDispatch } from "react-redux";
-import { ADD_USER } from "./redux/actions/user";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 
 function App() {
-  useEffect(() => {
-    (async () => {
-      try {
-        const token = await AsyncStorage.getItem("access_token");
-        const user = await getUserData(token!);
-        console.log(user);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
-
-  return <Views />;
+  return (
+    <Provider store={store}>
+      <Views />
+    </Provider>
+  );
 }
 
 export default App;
