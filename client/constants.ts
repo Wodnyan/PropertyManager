@@ -6,4 +6,5 @@ export enum Screens {
   Choose = "CHOOSE",
   LandlordChoice = "LANDLORDCHOICE",
   TenantChoice = "TENANTCHOICE",
+  Properties = "PROPERTIES",
 }

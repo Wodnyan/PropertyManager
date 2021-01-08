@@ -10,13 +10,13 @@ export const checkToken = (req: Request, res: Response, next: NextFunction) => {
       // Bearer <token>
       token = token.split(" ")[1];
       const verified = jwt.verify(token, process.env.JWT_SECRET!);
-      console.log("Here");
+      // @ts-ignore
+      req.userId = verified.data.id;
       next();
     } else {
       const error = new Error("No authentication token was provided");
       res.status(401);
       next(error);
-      console.log("Check refreshToken");
     }
   } catch (error) {
     if (error.message === "jwt expired") {
@@ -24,6 +24,7 @@ export const checkToken = (req: Request, res: Response, next: NextFunction) => {
       try {
         const verified = jwt.verify(refreshToken, process.env.JWT_SECRET!);
         res.cookie("refresh_token", refreshToken, { httpOnly: true });
+        // TODO: Create a new access token.
         return next();
       } catch (error) {
         res.status(401);

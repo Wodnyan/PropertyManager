@@ -5,12 +5,17 @@ import { joinProperty, createProperty } from "../lib/api/properties";
 import { Property } from "../types";
 import { useSelector, shallowEqual } from "react-redux";
 import { createOwner } from "../lib/api/owners";
+import { useNavigation } from "@react-navigation/native";
+import { Screens } from "../constants";
 
 export const CreateNewProperty = () => {
   const user = useSelector((state: any) => state.user, shallowEqual);
+  const navigation = useNavigation();
+
   useEffect(() => {
     console.log(user);
   }, [user]);
+
   const [propertyInfo, setPropertyInfo] = useState<Property>({
     name: "",
     ownerId: null,
@@ -24,10 +29,14 @@ export const CreateNewProperty = () => {
       const token = await AsyncStorage.getItem("access_token");
       const { owner } = await createOwner(user.id, token!);
       console.log("Owner: ", owner.id);
-      const property = await createProperty({
-        ...propertyInfo,
-        ownerId: owner.id,
-      }, token!);
+      const property = await createProperty(
+        {
+          ...propertyInfo,
+          ownerId: owner.id,
+        },
+        token!
+      );
+      navigation.navigate(Screens.Properties);
       console.log(property);
     } catch (error) {
       console.error(error);

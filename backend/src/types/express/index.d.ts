@@ -1,5 +1,6 @@
 declare namespace Express {
   export interface Request {
-    refreshToken?: string;
+    token?: string;
+    userId?: number;
   }
 }
